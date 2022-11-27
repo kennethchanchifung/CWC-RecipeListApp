@@ -10,6 +10,7 @@ import Foundation
 class Recipe: Identifiable, Decodable {
     
     var id:UUID?
+    var category:String
     var name:String
     var featured:Bool
     var image:String
