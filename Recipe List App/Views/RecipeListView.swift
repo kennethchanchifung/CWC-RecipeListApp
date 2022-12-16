@@ -21,6 +21,8 @@ struct RecipeListView: View {
     
     var body: some View {
         
+        // CoreData
+        
         NavigationView {
             VStack(alignment: .leading){
                 Text(title)
