@@ -9,9 +9,10 @@ import SwiftUI
 
 struct RecipeFeaturedView: View {
     
-    @EnvironmentObject var model:RecipeModel
     @State var isDetailViewShowing = false
     @State var tabSelectionIndex = 0
+    
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], predicate: NSPredicate(format: "featured == true")) var recipes: FetchedResults<Recipe>
     
     var body: some View {
         
@@ -25,41 +26,38 @@ struct RecipeFeaturedView: View {
             GeometryReader{ geo in
                 TabView(selection: $tabSelectionIndex) {
                     // Loop through each recipe
-                    ForEach(0..<model.recipes.count) { index in
+                    ForEach(0..<recipes.count) { index in
                         
-                        // Only show those that should be featured
-                        if model.recipes[index].featured{
+                        Button(action: {
                             
-                            Button(action: {
-                                
-                                // Show the recipe detail view
-                                self.isDetailViewShowing = true
-                                
-                            }, label: {
-                                // Recipe Card
-                                ZStack{
-                                    Rectangle()
-                                        .foregroundColor(.white)
-                                    VStack(spacing: 0){
-                                        Image(model.recipes[index].image)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .clipped()
-                                        Text(model.recipes[index].image)
-                                            .padding(5)
-                                            .font(Font.custom("Avenir", size: 15))
-                                    }
+                            // Show the recipe detail view
+                            self.isDetailViewShowing = true
+                            
+                        }, label: {
+                            // Recipe Card
+                            ZStack{
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                VStack(spacing: 0){
+                                    let image = UIImage(data: recipes[index].image ?? Data()) ?? UIImage()
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .clipped()
+                                    Text(recipes[index].name)
+                                        .padding(5)
+                                        .font(Font.custom("Avenir", size: 15))
                                 }
-                            })
-                                .tag(index)
-                                .sheet(isPresented: $isDetailViewShowing){
-                                    RecipeDetailView(recipe: model.recipes[index])
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .frame(width: geo.size.width-40, height: geo.size.height-100, alignment: .center)
-                                .cornerRadius(15)
-                                .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
-                        }
+                            }
+                        })
+                            .tag(index)
+                            .sheet(isPresented: $isDetailViewShowing){
+                                RecipeDetailView(recipe: recipes[index])
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .frame(width: geo.size.width-40, height: geo.size.height-100, alignment: .center)
+                            .cornerRadius(15)
+                            .shadow(color: Color(.sRGB, red: 0, green: 0, blue: 0, opacity: 0.5), radius: 10, x: -5, y: 5)
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
@@ -69,11 +67,11 @@ struct RecipeFeaturedView: View {
             VStack(alignment: .leading, spacing: 10){
                 Text("Prepration Time:")
                     .font(Font.custom("Avenir Heavy", size: 16))
-                Text(model.recipes[tabSelectionIndex].prepTime)
+                Text(recipes[tabSelectionIndex].prepTime)
                     .font(Font.custom("Avenir", size: 15))
                 Text("Highlights")
                     .font(Font.custom("Avenir Heavy", size: 16))
-                RecipeHighlightsView(highlights: model.recipes[tabSelectionIndex].highlights)
+                RecipeHighlightsView(highlights: recipes[tabSelectionIndex].highlights)
             }
             .padding([.leading, .bottom])
         }
@@ -85,7 +83,7 @@ struct RecipeFeaturedView: View {
     func setFeaturedIndex() {
         
         // Find the index of first recipe that is featured
-        let index = model.recipes.firstIndex { recipe -> Bool in
+        let index = recipes.firstIndex { recipe -> Bool in
             return recipe.featured
         }
         tabSelectionIndex = index ?? 0

@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 
 class RecipeModel: ObservableObject {
+    
+    // Reference to the managed object context
+    let managedObjectContext = PersistenceController.shared.container.viewContext
     
     @Published var recipes = [Recipe]()
     @Published var categories = Set<String>()
@@ -15,51 +20,119 @@ class RecipeModel: ObservableObject {
     
     init() {
         
+        // Check if we have preloaded the data into core data
+        checkLoadedData()
+        
         // Create an instance of data service and get the data
-        self.recipes = DataService.getLocalData()
-        self.categories = Set(self.recipes.map({ recipe in return recipe.category }))
+        // self.recipes = DataService.getLocalData()
+//        self.categories = Set(self.recipes.map({ recipe in
+//            return recipe.category }))
+        for recipe in recipes {
+            self.categories.insert(recipe.category ?? "")
+        }
         self.categories.update(with: Constants.defaultListFilter)
         
+    }
+    
+    func checkLoadedData() {
+        
+        // Check local storage for the flag
+        let status = UserDefaults.standard.bool(forKey: Constants.isDataPreloaded)
+        // If it's false, then we should parse the local json and preload into Core Data
+        if status == false {
+            preloadLocalData()
+        }
+        
+    }
+    
+    func preloadLocalData() {
+        
+        // Parse the local JSON file
+        let localRecipes = DataService.getLocalData()
+        
+        // Create Core Data objects
+        for r in localRecipes {
+            
+            // Create a core data object
+            let recipe = Recipe(context: managedObjectContext)
+            
+            // Set its properties
+            recipe.cookTime = r.cookTime
+            recipe.directions = r.directions
+            recipe.featured = r.featured
+            recipe.highlights = r.highlights
+            recipe.id = UUID()
+            recipe.image = UIImage(named: r.image)?.jpegData(compressionQuality: 1.0)
+            recipe.name = r.name
+            recipe.prepTime = r.prepTime
+            recipe.servings = r.servings
+            recipe.summary = r.description
+            recipe.totalTime = r.totalTime
+            
+            // Set the ingredients
+            for i in r.ingredients {
+                
+                // Create a core data ingredient object
+                let ingredient = Ingredient(context: managedObjectContext)
+                ingredient.id = UUID()
+                ingredient.name = i.name
+                ingredient.unit = i.unit
+                ingredient.num = i.num ?? 1
+                ingredient.denom = i.denom ?? 1
+                
+                // Add this ingredient
+                recipe.addToIngredients(ingredient)
+                
+            }
+            
+        }
+        
+        // Save into Core Data
+        do {
+            try managedObjectContext.save()
+            // Set local storage flag
+            UserDefaults.standard.setValue(true, forKey: Constants.isDataPreloaded)
+        }
+        catch {
+            // Couldn't save to core data
+        }
     }
     
     static func getPortion(ingredient:Ingredient, recipeServings:Int, targetServings:Int) -> String {
         
         var portion = ""
-        var numerator = ingredient.num ?? 1
-        var denominator = ingredient.denom ?? 1
+        var numerator = ingredient.num
+        var denominator = ingredient.denom
         var wholePortions = 0
+            
+        // Get a single serving size by multiplying denominator by the recipe servings
+        denominator *= recipeServings
+
+        // Get a target portion by multiplying numerator by target servings
+        numerator *= targetServings
+
+        // Reduce fraction by greatest common divisor
+        let divisor = Rational.greatestCommonDivisor(numerator, denominator)
+        numerator /= divisor
+        denominator /= divisor
         
-        if ingredient.num != nil {
-            
-            // Get a single serving size by multiplying denominator by the recipe servings
-            denominator *= recipeServings
-            
-            // Get a target portion by multiplying numerator by target servings
-            numerator *= targetServings
-            
-            // Reduce fraction by greatest common divisor
-            let divisor = Rational.greatestCommonDivisor(numerator, denominator)
-            numerator /= divisor
-            denominator /= divisor
-            
-            // Get the whole portion if numerator > denominator
-            if numerator >= denominator {
-                
-                // Calcuated whole portions
-                wholePortions = numerator / denominator
-                // Calculated the remainder
-                numerator = numerator % denominator
-                // Assign to portion string
-                portion += String(wholePortions)
-            }
-            
-            // Express the reminder as a fraction
-            if numerator > 0 {
-                portion += wholePortions > 0 ? " " : ""
-                portion += String("\(numerator)/\(denominator)")
-            }
+        // Get the whole portion if numerator > denominator
+        if numerator >= denominator {
+
+            // Calcuated whole portions
+            wholePortions = numerator / denominator
+            // Calculated the remainder
+            numerator = numerator % denominator
+            // Assign to portion string
+            portion += String(wholePortions)
         }
-        
+
+        // Express the reminder as a fraction
+        if numerator > 0 {
+            portion += wholePortions > 0 ? " " : ""
+            portion += String("\(numerator)/\(denominator)")
+        }
+
         if var unit = ingredient.unit{
             
             // If we need to pluralize
@@ -78,9 +151,9 @@ class RecipeModel: ObservableObject {
                 }
             }
             
-            // Calculate appropriate siffix
+            // Calculate appropriate suffix
             
-            portion += ingredient.num == nil && ingredient.denom == nil ? "" : " "
+            // portion += ingredient.num == nil && ingredient.denom == nil ? "" : " "
             
             return "\(portion) \(unit)"
         }

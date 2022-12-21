@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A31ED8A294EC71D00930181 /* Recipe+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31ED86294EC71D00930181 /* Recipe+CoreDataClass.swift */; };
+		0A31ED8B294EC71D00930181 /* Recipe+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31ED87294EC71D00930181 /* Recipe+CoreDataProperties.swift */; };
+		0A31ED8C294EC71D00930181 /* Ingredient+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31ED88294EC71D00930181 /* Ingredient+CoreDataClass.swift */; };
+		0A31ED8D294EC71D00930181 /* Ingredient+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31ED89294EC71D00930181 /* Ingredient+CoreDataProperties.swift */; };
+		0A31EDAE294EF0EA00930181 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31EDAD294EF0EA00930181 /* Persistence.swift */; };
+		0A36F49E294CB129001898BE /* Recipe Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0A36F49C294CB128001898BE /* Recipe Data Model.xcdatamodeld */; };
 		0A3D352B290E6E5500EF2624 /* Rational.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D352A290E6E5500EF2624 /* Rational.swift */; };
 		0A418DB42933A539000E5FB9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A418DB32933A539000E5FB9 /* Constants.swift */; };
 		0A418DB62933A5ED000E5FB9 /* RecipeCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A418DB52933A5ED000E5FB9 /* RecipeCategoryView.swift */; };
@@ -25,6 +31,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A31ED86294EC71D00930181 /* Recipe+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Recipe+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0A31ED87294EC71D00930181 /* Recipe+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Recipe+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0A31ED88294EC71D00930181 /* Ingredient+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ingredient+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0A31ED89294EC71D00930181 /* Ingredient+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ingredient+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0A31EDAD294EF0EA00930181 /* Persistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		0A36F49D294CB128001898BE /* Recipe Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Recipe Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		0A3D352A290E6E5500EF2624 /* Rational.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rational.swift; sourceTree = "<group>"; };
 		0A418DB32933A539000E5FB9 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		0A418DB52933A5ED000E5FB9 /* RecipeCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCategoryView.swift; sourceTree = "<group>"; };
@@ -137,7 +149,13 @@
 		831EE69325B0C77C00BACCDD /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				0A31EDAD294EF0EA00930181 /* Persistence.swift */,
+				0A31ED86294EC71D00930181 /* Recipe+CoreDataClass.swift */,
+				0A31ED87294EC71D00930181 /* Recipe+CoreDataProperties.swift */,
+				0A31ED88294EC71D00930181 /* Ingredient+CoreDataClass.swift */,
+				0A31ED89294EC71D00930181 /* Ingredient+CoreDataProperties.swift */,
 				831EE69525B0C7E100BACCDD /* recipes.json */,
+				0A36F49C294CB128001898BE /* Recipe Data Model.xcdatamodeld */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -220,14 +238,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A31ED8B294EC71D00930181 /* Recipe+CoreDataProperties.swift in Sources */,
+				0A36F49E294CB129001898BE /* Recipe Data Model.xcdatamodeld in Sources */,
 				831EE69D25B0C85E00BACCDD /* Recipe.swift in Sources */,
 				0A418DB42933A539000E5FB9 /* Constants.swift in Sources */,
 				831EE6C625B0E0A200BACCDD /* RecipeDetailView.swift in Sources */,
 				0A3D352B290E6E5500EF2624 /* Rational.swift in Sources */,
+				0A31ED8C294EC71D00930181 /* Ingredient+CoreDataClass.swift in Sources */,
 				831EE6A325B0C99A00BACCDD /* RecipeModel.swift in Sources */,
 				831EE68225B0C74D00BACCDD /* RecipeListView.swift in Sources */,
+				0A31EDAE294EF0EA00930181 /* Persistence.swift in Sources */,
+				0A31ED8D294EC71D00930181 /* Ingredient+CoreDataProperties.swift in Sources */,
 				0A53162A290EBC0D005288A0 /* RecipeHighlightsView.swift in Sources */,
 				831EE68025B0C74D00BACCDD /* Recipe_List_App.swift in Sources */,
+				0A31ED8A294EC71D00930181 /* Recipe+CoreDataClass.swift in Sources */,
 				0A418DB62933A5ED000E5FB9 /* RecipeCategoryView.swift in Sources */,
 				831EE6A725B0CAD000BACCDD /* DataService.swift in Sources */,
 				0AC25037290C041A007C12CF /* RecipeFeaturedView.swift in Sources */,
@@ -420,6 +444,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		0A36F49C294CB128001898BE /* Recipe Data Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0A36F49D294CB128001898BE /* Recipe Data Model.xcdatamodel */,
+			);
+			currentVersion = 0A36F49D294CB128001898BE /* Recipe Data Model.xcdatamodel */;
+			path = "Recipe Data Model.xcdatamodeld";
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 831EE67425B0C74D00BACCDD /* Project object */;
 }
