@@ -12,61 +12,71 @@ struct RecipeListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @EnvironmentObject var model: RecipeModel
-    private var title: String {
-        if model.selectedCategory == nil || model.selectedCategory == Constants.defaultListFilter {
-            return Constants.defaultListFilter
+    
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)])
+    private var recipes: FetchedResults<Recipe>
+    
+    @State private var filterBy = ""
+    
+    private var filteredRecipes: [Recipe] {
+        
+        if filterBy == "" {
+            // No filter text, so return all recipes
+            return Array(recipes)
         }
         else {
-            return model.selectedCategory!
+            // Filter by the search term and return
+            // a subset of recipes which contain the search term in the name
+            return recipes.filter { r in
+                return r.name.contains(filterBy)
+            }
         }
     }
     
     var body: some View {
         
-        // CoreData
-        
         NavigationView {
             VStack(alignment: .leading){
-                Text(title)
-                    .bold()
-                    .padding(.leading)
-                    .padding(.top, 40)
-                    .font(Font.custom("Avenir Heavy", size: 24))
+                
+                SearchBarView(filterBy: $filterBy)
+                    .padding([.trailing, .bottom])
+                
                 ScrollView{
                     LazyVStack(alignment: .leading){
-                        ForEach(model.recipes) { r in
-                            if model.selectedCategory == nil ||
-                                model.selectedCategory == Constants.defaultListFilter ||
-                                r.category == model.selectedCategory {
-                                NavigationLink(
-                                    destination: RecipeDetailView(recipe:r),
-                                    label: {
-                                        
-                                        // MARK: Row item
-                                        HStack(spacing: 20.0) {
-                                            let image = UIImage(data: r.image ?? Data()) ?? UIImage()
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 50, height: 50, alignment: .center)
-                                                .clipped()
-                                                .cornerRadius(5)
-                                            VStack(alignment: .leading){
-                                                Text(r.name)
-                                                    .foregroundColor(.black)
-                                                    .font(Font.custom("Avenir Heavy", size: 16))
-                                                RecipeHighlightsView(highlights: r.highlights)
-                                            }
-                                            .foregroundColor(.black)
+                        Text("All Recipes")
+                        ForEach(filteredRecipes) { r in
+                            NavigationLink(
+                                destination: RecipeDetailView(recipe:r),
+                                label: {
+                                    
+                                    // MARK: Row item
+                                    HStack(spacing: 20.0) {
+                                        let image = UIImage(data: r.image ?? Data()) ?? UIImage()
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 50, height: 50, alignment: .center)
+                                            .clipped()
+                                            .cornerRadius(5)
+                                        VStack(alignment: .leading){
+                                            Text(r.name)
+                                                .foregroundColor(.black)
+                                                .font(Font.custom("Avenir Heavy", size: 16))
+                                            RecipeHighlightsView(highlights: r.highlights)
                                         }
-                                    })
-                            }
+                                        .foregroundColor(.black)
+                                    }
+                                })
                         }
                     }
                 }
             }
             .navigationBarHidden(true)
             .padding(.leading)
+            .onTapGesture {
+                // Resign first responder (escape from search bar keyboard)
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
         }
     }
 }
