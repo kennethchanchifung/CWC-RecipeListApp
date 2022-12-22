@@ -30,6 +30,14 @@ struct RecipeTabView: View {
                     }
                 }
                 .tag(Constants.categoriesTab)
+            AddRecipeView(selectedTab: $selectedTab)
+                .tabItem {
+                    VStack{
+                        Image(systemName: "plus.circle")
+                        Text("Add")
+                    }
+                }
+                .tag(Constants.addRecipeTab)
             RecipeListView()
                 .tabItem{
                     VStack{
